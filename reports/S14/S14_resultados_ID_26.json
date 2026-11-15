@@ -1,0 +1,79 @@
+{
+  "laboratorio": "S14",
+  "id_estudiante": "26",
+  "semilla": 1026,
+  "timestamp_utc": "2026-11-15T14:59:26.752492+00:00",
+  "python": "3.13.15",
+  "pandas": "3.1.0",
+  "numpy": "2.5.4",
+  "sklearn": "1.9.1",
+  "n_muestra": 35000,
+  "n_train": 24500,
+  "n_valid": 5250,
+  "n_test": 5250,
+  "huella_muestra": "78a4ad412176",
+  "umbral_clasificacion": 0.5,
+  "costos_didacticos_brl": {
+    "falso_positivo": 8,
+    "falso_negativo": 35
+  },
+  "pca": {
+    "n_numericas": 24,
+    "umbral_varianza": 0.9,
+    "n_componentes": 15,
+    "varianza_acumulada": 0.9039330690954094
+  },
+  "experimentos": [
+    {
+      "experimento": "A. Referencia (sin PCA, C=1)",
+      "accuracy": 0.660952381,
+      "precision": 0.121614445,
+      "recall": 0.6450704225,
+      "f1": 0.2046470063,
+      "ap": 0.1454991505,
+      "fp": 1654,
+      "fn": 126,
+      "costo": 17642
+    },
+    {
+      "experimento": "B. PCA 90 % (C=1)",
+      "accuracy": 0.6462857143,
+      "precision": 0.1120867769,
+      "recall": 0.6112676056,
+      "f1": 0.1894369271,
+      "ap": 0.1269451824,
+      "fp": 1719,
+      "fn": 138,
+      "costo": 18582
+    },
+    {
+      "experimento": "C. PCA 90 % (C=0,1)",
+      "accuracy": 0.644952381,
+      "precision": 0.1120822622,
+      "recall": 0.614084507,
+      "f1": 0.1895652174,
+      "ap": 0.129863804,
+      "fp": 1727,
+      "fn": 137,
+      "costo": 18611
+    },
+    {
+      "experimento": "D. PCA 90 % (C=10)",
+      "accuracy": 0.6459047619,
+      "precision": 0.1119711042,
+      "recall": 0.6112676056,
+      "f1": 0.1892716965,
+      "ap": 0.1257674193,
+      "fp": 1721,
+      "fn": 138,
+      "costo": 18598
+    }
+  ],
+  "ks_valor_flete": {
+    "D": 0.014448979591836775,
+    "p_valor": 0.32424123334875155,
+    "alfa": 0.05,
+    "decision": "no rechaza H0"
+  },
+  "modelo_elegido": null
+}

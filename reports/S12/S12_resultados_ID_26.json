@@ -2,11 +2,11 @@
   "laboratorio": "S12",
   "id_estudiante": "26",
   "semilla": 1026,
-  "timestamp_utc": "2026-10-28T06:54:35.774516+00:00",
-  "python": "3.12.3",
-  "pandas": "3.0.2",
-  "numpy": "2.4.4",
-  "sklearn": "1.8.0",
+  "timestamp_utc": "2026-11-15T04:10:33.752103+00:00",
+  "python": "3.13.15",
+  "pandas": "3.1.0",
+  "numpy": "2.5.4",
+  "sklearn": "1.9.1",
   "n_muestra": 35000,
   "n_train": 24500,
   "n_valid": 5250,
@@ -47,13 +47,13 @@
   "huella_muestra": "78a4ad412176",
   "peso_clases": "balanced",
   "metricas": {
-    "accuracy": 0.6605714285714286,
-    "precision": 0.1210833775889538,
-    "recall": 0.6422535211267606,
-    "f1": 0.2037533512064343,
-    "roc_auc": 0.7049164856349537,
-    "ap": 0.14548419056919376
+    "accuracy": 0.660952380952381,
+    "precision": 0.12161444503451939,
+    "recall": 0.6450704225352113,
+    "f1": 0.20464700625558535,
+    "roc_auc": 0.7048387978535153,
+    "ap": 0.14549915050173276
   },
-  "costo_errores_brl": 17685.0,
-  "mae_regresion": 5.272788226268106
+  "costo_errores_brl": 17642.0,
+  "mae_regresion": 5.2728243551220615
 }

@@ -1,0 +1,314 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="description" content="Lectura de apoyo para la semana 14: PCA, SVD, regularización, experimentación y KS en Olist"/><title>Semana 14 | Material de apoyo | Data Analytics</title><style>
+:root {
+  --ink: rgba(0,0,0,.84); --muted: rgba(0,0,0,.56);
+  --line: rgba(0,0,0,.12); --soft:#f7f7f7; --link:#1a8917;
+  --serif: medium-content-serif-font, Georgia, Cambria,"Times New Roman",Times,serif;
+  --sans: sohne,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  --display: gt-super,Georgia,Cambria,"Times New Roman",Times,serif;
+}
+* {box-sizing:border-box}
+html {scroll-behavior:smooth}
+body {margin:0;background:#fff;color:var(--ink);font-family:var(--serif);font-size:21px;line-height:1.58;letter-spacing:-.003em}
+.topbar {border-bottom:1px solid var(--line);font-family:var(--sans)}
+.topbar-inner {width:min(1080px,calc(100% - 40px));min-height:58px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.site-title {color:#242424;font-size:15px;font-weight:600;letter-spacing:0}
+.site-meta {color:var(--muted);font-size:13px;letter-spacing:0}
+article {width:min(680px,calc(100% - 40px));margin:58px auto 92px}
+.eyebrow {margin:0 0 12px;color:#8250df;font-family:var(--sans);font-size:13px;font-weight:400;letter-spacing:.02em;text-transform:uppercase}
+h1 {margin:0;color:#242424;font-family:var(--display);font-size:54px;font-weight:400;line-height:1.08;letter-spacing:-.03em}
+.subtitle {margin:18px 0 16px;color:rgba(0,0,0,.62);font-family:var(--sans);font-size:20px;line-height:1.45;letter-spacing:0}
+.byline {margin:0 0 42px;color:var(--muted);font-family:var(--sans);font-size:14px;line-height:1.5;letter-spacing:0}
+p {margin:0 0 26px} .lead {font-size:21px}
+h2 {margin:52px 0 18px;color:#242424;font-family:var(--sans);font-size:28px;font-weight:600;line-height:1.25;letter-spacing:-.015em}
+h3 {margin:36px 0 12px;color:#242424;font-family:var(--sans);font-size:21px;font-weight:600;line-height:1.35;letter-spacing:-.01em}
+ul,ol {margin:0 0 26px;padding-left:26px} li {margin:8px 0}
+a {color:inherit;text-decoration:underline;text-decoration-color:rgba(0,0,0,.35);text-underline-offset:2px}
+a:hover {text-decoration-color:currentColor}
+code {padding:2px 5px;border-radius:3px;background:#f2f2f2;color:#242424;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.82em}
+pre {margin:22px 0 28px;padding:18px 20px;overflow-x:auto;background:#f7f7f7;border:1px solid var(--line);border-radius:3px;color:#242424;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13.5px;line-height:1.65}
+pre code {padding:0;background:none;font-size:inherit}
+.note {margin:30px 0;padding:16px 20px;border-left:3px solid #242424;background:var(--soft)} .note p {margin:0}
+.definition {margin:30px 0;padding:18px 20px;border:1px solid var(--line)}
+.definition-title {margin-bottom:8px;color:#242424;font-family:var(--sans);font-size:16px;font-weight:600;line-height:1.4}
+.definition p {margin:0}
+table {width:100%;margin:26px 0 34px;border-collapse:collapse;font-family:var(--sans);font-size:15px;line-height:1.45;letter-spacing:0}
+th,td {padding:12px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.mini-nav {font-family:var(--sans);font-size:15px;line-height:1.6;margin:28px 0 30px}
+.small, figcaption {color:var(--muted);font-family:var(--sans);font-size:13px;line-height:1.5}
+.references {font-family:var(--sans);font-size:14px;line-height:1.55}
+.references a {color:#0969da;text-decoration-color:#0969da;text-underline-offset:2px}
+.case-figure {margin:32px 0 39px} .chart-frame {padding:11px 6px 0;border:1px solid var(--line);background:#fff}
+.chart-frame svg {display:block;width:100%;height:auto} .case-figure figcaption {margin-top:11px}
+.fig-number {color:#242424;font-weight:600}
+footer {border-top:1px solid var(--line);padding:28px 20px 44px;color:var(--muted);font-family:var(--sans);font-size:13px;line-height:1.5}
+footer div {width:min(680px,100%);margin:0 auto}
+@media screen and (max-width: 760px) {
+ body{font-size:19px;line-height:1.55}article{margin-top:42px}.subtitle{font-size:18px}h2{font-size:25px}
+ table thead{display:none}table,table tbody,table tr,table td{display:block;width:100%}
+ table tbody tr{margin:0 0 14px;padding:5px 13px;border:1px solid var(--line);border-radius:5px}
+ table tbody td{border:0;border-bottom:1px solid var(--line);padding:10px 0;font-size:14px;line-height:1.5;overflow-wrap:anywhere;white-space:normal}
+ table tbody td:last-child{border-bottom:0}
+ table tbody td::before{display:block;content:attr(data-label);font-family:var(--sans);font-size:11px;line-height:1.4;letter-spacing:.04em;text-transform:uppercase;font-weight:700;color:#606060;padding-bottom:4px}
+ pre{font-size:12px;padding:14px 11px}
+}
+@media print {
+ @page{size:A4;margin:16mm 17mm 17mm}
+ html,body{background:white!important}body{font-size:11.6px;line-height:1.37}
+ article{margin:0 auto;width:100%;max-width:100%}h1{font-size:30px}
+ h2{font-size:19px;margin:18px 0 7px}h3{font-size:14px;margin:13px 0 5px}
+ h2,h3{break-after:avoid}p,ul,ol{margin-bottom:9px}
+ .subtitle{font-size:15px}.lead{font-size:14px}.byline{margin-bottom:18px}
+ table{font-size:9.5px;line-height:1.27;margin:9px 0 12px}th,td{padding:6px 7px}
+ tr,figure,.note,.definition{break-inside:avoid}
+ .topbar,footer{display:none}.note,.definition{margin:16px 0;padding:11px 13px}
+ .case-figure{margin:12px 0 15px}
+}
+
+/* Ampliaciones discretas para una lectura de estudio, sin modificar la línea editorial */
+.lecture-map {font-family:var(--sans);font-size:15px;line-height:1.7;margin:28px 0 30px}
+.lecture-map a{white-space:normal}
+.math-line {display:block;text-align:center;padding:10px 4px;margin:17px 0 26px;color:#242424;font-size:23px;letter-spacing:.01em}
+.caption-kicker {font-size:12px;color:#5d5d5d;font-family:var(--sans)}
+.figure-aside {font-size:14px;color:var(--muted);font-family:var(--sans)}
+.ref-label {font-size:14px;color:var(--muted);font-family:var(--sans)}
+.question {border-top:1px solid var(--line);padding-top:16px;margin:26px 0}
+.glossary td:first-child{width:34%;font-weight:600}
+@media print {
+ @page {size:A4;margin:17mm 17mm 19mm 17mm;@bottom-right{content:counter(page);color:#888;font-size:9px}}
+ html,body{background:#fff}
+ body{font-size:13px;line-height:1.48}
+ article{max-width:100%}
+ h1{font-size:35px}h2{font-size:21px;margin:24px 0 9px}h3{font-size:16px;margin:20px 0 7px}
+ p,ul,ol{margin-bottom:13px}
+ .lead{font-size:15px} .subtitle{font-size:16px}.byline{margin-bottom:24px}
+ .math-line{font-size:16px;padding:8px 0;margin:9px 0 13px}
+ .case-figure{margin:16px 0 18px}figcaption{font-size:11px}
+ .lecture-map{font-size:11px;margin:16px 0}
+ pre{font-size:9.8px;line-height:1.48;padding:10px 12px;margin:13px 0 16px;white-space:pre-wrap;overflow-wrap:anywhere}
+ tr,.note,.definition,pre,figure{break-inside:avoid}
+ ul,ol{padding-left:22px}
+}
+
+/* Referencias dentro del texto, vinculadas con la bibliografía final. */
+.citation{font-family:var(--sans);font-size:.78em;text-decoration:none;vertical-align:baseline;white-space:nowrap;color:#0969da}
+.citation:hover{text-decoration:underline}
+.references li{scroll-margin-top:26px;overflow-wrap:anywhere}
+@media print{.citation{color:#242424;font-size:.82em}.references li{break-inside:avoid}.references a{overflow-wrap:anywhere}}
+</style></head><body>
+<header class="topbar"><div class="topbar-inner"><div class="site-title">Data Analytics</div><div class="site-meta">Ingeniería de Sistemas, 2026-2</div></div></header>
+<article>
+<p class="eyebrow">Semana 14. Lectura técnica complementaria</p>
+<h1>Reducir variables no siempre mejora una predicción</h1>
+<p class="subtitle">PCA, SVD, regularización y validación estadística en el reto de entregas tardías de Olist.</p>
+<p class="byline">Data Analytics ML Challenge, 2026-2 | Elias Buitrago Bolivar | Universidad Central</p>
+<p class="lead">En la semana 12 se construyó un modelo para reconocer pedidos con riesgo de incumplir una fecha de entrega. Ahora la pregunta cambia: ¿cómo determinar si una transformación o un ajuste realmente mejora ese modelo? Esta lectura reúne las ideas necesarias para interpretar los experimentos de la semana 14, sin anticipar los resultados de la muestra individual.</p>
+<p>Se recupera el contenido de reducción de dimensionalidad previsto para la semana 13 y se conecta con el trabajo de optimización de la semana 14. No se requiere descargar un nuevo conjunto de datos. Se continúa con el mismo problema empresarial, las mismas variables y la estructura de repositorio utilizada durante el tercer corte.</p>
+<div class="definition"><div class="definition-title">Pregunta de la lectura</div><p>Si dos modelos predicen sobre los mismos pedidos, ¿cuál debe preferirse: el que conserva más variables, el que resume mejor los datos o el que produce una decisión operativa menos costosa?</p></div>
+<p class="lecture-map">Contenido: <a href="#caso">el problema</a> | <a href="#pca">PCA y varianza</a> | <a href="#svd">SVD</a> | <a href="#preparacion">preparación</a> | <a href="#regularizacion">regularización</a> | <a href="#experimentos">comparación</a> | <a href="#metricas">métricas y costo</a> | <a href="#ks">Kolmogorov-Smirnov</a> | <a href="#lectura-resultados">interpretación</a> | <a href="#referencias">referencias</a>.</p>
+<section id="caso"><h2>Una misma base de datos, distintas decisiones</h2>
+<p>Olist reúne información de pedidos, productos, fletes, pagos, clientes y vendedores en un conjunto público de comercio electrónico. El laboratorio utiliza un registro por pedido y busca predecir si la entrega real será posterior a la fecha prometida. La variable objetivo <code>is_late</code> toma el valor 1 para un retraso y 0 para una entrega puntual. <a class="citation" href="#ref-8" title="Ver referencia 8">[8]</a></p>
+<p>Cada estudiante emplea el mismo identificador de la semana 12. Con ese ID se selecciona una muestra reproducible de 35.000 pedidos; 24.500 integran el entrenamiento, 5.250 la validación y 5.250 quedan reservados para la prueba final. La comparación de la semana 14 se realiza sobre validación. El conjunto de prueba no interviene en la selección de configuraciones. <a class="citation" href="#ref-1" title="Ver referencia 1">[1]</a> <a class="citation" href="#ref-4" title="Ver referencia 4">[4]</a></p>
+<table><thead><tr><th>Conjunto</th><th>Pedidos</th><th>Uso permitido en este momento</th></tr></thead><tbody>
+<tr><td data-label="Conjunto">Entrenamiento</td><td data-label="Pedidos">24.500</td><td data-label="Uso permitido en este momento">Aprender la imputación, la escala, PCA y los parámetros del clasificador.</td></tr>
+<tr><td data-label="Conjunto">Validación</td><td data-label="Pedidos">5.250</td><td data-label="Uso permitido en este momento">Medir errores, contrastar configuraciones y elegir una alternativa.</td></tr>
+<tr><td data-label="Conjunto">Prueba final</td><td data-label="Pedidos">5.250</td><td data-label="Uso permitido en este momento">Se conserva sin consultar durante la selección.</td></tr>
+</tbody></table>
+<p>La prevalencia de retrasos es relativamente baja. Esto explica por qué un modelo que siempre predijera entregas puntuales podría tener una exactitud elevada y, al mismo tiempo, no detectar ningún pedido que requiera intervención. El ejercicio no se limita a aumentar Accuracy: interesa reconocer la clase minoritaria y relacionar los errores con una decisión de logística.</p>
+</section>
+<section id="pca"><h2>¿Qué significa reducir la dimensionalidad?</h2>
+<p>Una base analítica contiene dimensiones cuando cada pedido queda descrito por varias características. En Olist hay variables numéricas sobre precio, flete, peso, volumen, cantidad de productos y plazo de entrega; algunas guardan relación entre sí. Tener más columnas no garantiza disponer de más información independiente.</p>
+<p>El Análisis de Componentes Principales (PCA) construye nuevas coordenadas a partir de combinaciones lineales de las variables originales. La primera componente principal (CP1) representa la dirección de mayor variabilidad; la segunda recoge la mayor variabilidad restante y es perpendicular a la primera. Las siguientes componentes siguen la misma lógica. <a class="citation" href="#ref-2" title="Ver referencia 2">[2]</a></p>
+<figure class="case-figure"><div class="chart-frame"><svg viewBox="0 0 680 335" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Nube de puntos oblicua y direcciones de primera y segunda componente principal">
+<rect width="680" height="335" fill="white"/><text x="16" y="29" font-family="Arial" font-size="18" font-weight="600" fill="#222">Dos variables con información relacionada</text>
+<line x1="62" y1="295" x2="624" y2="295" stroke="#aaa" stroke-width="1.5"/><line x1="62" y1="295" x2="62" y2="47" stroke="#aaa" stroke-width="1.5"/>
+<path d="M618 291 l8 4 -8 4" fill="none" stroke="#aaa" stroke-width="1.5"/><path d="M58 54 l4 -8 4 8" fill="none" stroke="#aaa" stroke-width="1.5"/>
+<text x="460" y="322" font-family="Arial" fill="#555" font-size="12">Variable 1, estandarizada</text>
+<text x="17" y="171" transform="rotate(-90 17 171)" font-family="Arial" fill="#555" font-size="12">Variable 2, estandarizada</text>
+<circle cx="68.0" cy="261.0" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="82.2" cy="251.4" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="96.5" cy="258.6" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="110.8" cy="259.0" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="125.0" cy="255.2" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="139.2" cy="262.6" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="153.5" cy="268.8" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="167.8" cy="248.0" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="182.0" cy="211.0" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="196.2" cy="199.7" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="210.5" cy="226.2" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="224.8" cy="250.8" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="239.0" cy="239.2" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="253.2" cy="208.0" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="267.5" cy="192.4" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="281.8" cy="193.6" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="296.0" cy="190.8" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="310.2" cy="185.2" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="324.5" cy="194.2" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="338.8" cy="208.6" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="353.0" cy="196.5" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="367.2" cy="157.4" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="381.5" cy="133.3" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="395.8" cy="150.2" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="410.0" cy="179.0" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="424.2" cy="178.9" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="438.5" cy="153.9" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="452.8" cy="135.9" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="467.0" cy="132.4" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="481.2" cy="125.4" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="495.5" cy="115.3" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="509.8" cy="122.6" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="524.0" cy="143.6" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="538.2" cy="142.9" r="3.6" fill="#6b8f80" fill-opacity=".75"/><circle cx="552.5" cy="106.9" r="3.6" fill="#6b8f80" fill-opacity=".75"/>
+<line x1="89" y1="284" x2="577" y2="80" stroke="#404c68" stroke-width="3"/>
+<path d="M564 80 L579 78 L571 91" fill="none" stroke="#404c68" stroke-width="3"/>
+<line x1="294" y1="92" x2="374" y2="282" stroke="#a36a55" stroke-width="3" stroke-dasharray="8 5"/>
+<text x="542" y="64" font-family="Arial" font-size="15" font-weight="600" fill="#404c68">CP1</text>
+<text x="384" y="281" font-family="Arial" font-size="15" font-weight="600" fill="#a36a55">CP2</text>
+<text x="80" y="55" fill="#777" font-family="Arial" font-size="12">Ilustración conceptual, no datos de Olist</text>
+</svg></div><figcaption><span class="fig-number">Figura 1.</span> Representación geométrica de PCA sobre dos variables ficticias correlacionadas. CP1 sigue la dirección donde se observa mayor dispersión; CP2 resume variación adicional. Los puntos no representan pedidos reales. <a class="citation" href="#ref-2" title="Ver referencia 2">[2]</a></figcaption></figure>
+<p>La utilidad de PCA consiste en resumir información relacionada. También puede facilitar la visualización y reducir algunas redundancias. Pero <em>maximizar varianza no es lo mismo que maximizar capacidad predictiva</em>: una dimensión que presenta poca variación puede conservar información importante para distinguir entregas puntuales y tardías. <a class="citation" href="#ref-2" title="Ver referencia 2">[2]</a></p>
+<h3>Cómo leer la varianza explicada</h3>
+<p>Cada componente aporta una fracción de la variabilidad total. Cuando se suman esas fracciones se obtiene la varianza explicada acumulada. Como criterio didáctico, el laboratorio conserva suficientes componentes para explicar al menos el 90 % de la varianza de las variables numéricas transformadas. El porcentaje sirve para controlar cuánta información geométrica se retiene, no para anticipar el F1 ni el Recall. <a class="citation" href="#ref-2" title="Ver referencia 2">[2]</a></p>
+<figure class="case-figure"><div class="chart-frame"><svg viewBox="0 0 680 328" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ejemplo hipotético de varianza explicada acumulada con cinco componentes">
+<rect width="680" height="328" fill="white"/><text x="17" y="30" font-family="Arial" font-size="18" font-weight="600" fill="#222">Varianza explicada acumulada</text><text x="17" y="53" font-family="Arial" font-size="12" fill="#666">Ejemplo inventado: 52 %, 76 %, 90 %, 96 %, 100 %</text>
+<line x1="46" y1="265" x2="630" y2="265" stroke="#aaa"/><line x1="46" y1="76" x2="46" y2="265" stroke="#aaa"/>
+<line x1="46" y1="104.8" x2="626" y2="104.8" stroke="#a36a55" stroke-dasharray="6 5" stroke-width="1.8"/>
+<text x="565" y="94" font-family="Arial" fill="#a36a55" font-size="13">Umbral 90 %</text>
+<rect x="53" y="172.4" width="46" height="92.6" fill="#4a695c"/><rect x="163" y="129.7" width="46" height="135.3" fill="#4a695c"/><rect x="273" y="104.8" width="46" height="160.2" fill="#4a695c"/><rect x="383" y="94.1" width="46" height="170.9" fill="#bcc8c3"/><rect x="493" y="87.0" width="46" height="178.0" fill="#bcc8c3"/><polyline points="76,172.4 186,129.7 296,104.8 406,94.1 516,87.0" stroke="#405a4f" stroke-width="2.5" fill="none"/><text x="76" y="163.4" fill="#304439" font-family="Arial" font-size="12" text-anchor="middle">52 %</text><text x="76" y="291" fill="#555" font-family="Arial" font-size="12" text-anchor="middle">1</text><text x="186" y="120.7" fill="#304439" font-family="Arial" font-size="12" text-anchor="middle">76 %</text><text x="186" y="291" fill="#555" font-family="Arial" font-size="12" text-anchor="middle">2</text><text x="296" y="95.8" fill="#304439" font-family="Arial" font-size="12" text-anchor="middle">90 %</text><text x="296" y="291" fill="#555" font-family="Arial" font-size="12" text-anchor="middle">3</text><text x="406" y="85.1" fill="#304439" font-family="Arial" font-size="12" text-anchor="middle">96 %</text><text x="406" y="291" fill="#555" font-family="Arial" font-size="12" text-anchor="middle">4</text><text x="516" y="78.0" fill="#304439" font-family="Arial" font-size="12" text-anchor="middle">100 %</text><text x="516" y="291" fill="#555" font-family="Arial" font-size="12" text-anchor="middle">5</text>
+<text x="314" y="316" font-family="Arial" text-anchor="middle" font-size="12" fill="#555">Número de componentes retenidas</text>
+</svg></div><figcaption><span class="fig-number">Figura 2.</span> Ejemplo inventado con cinco componentes: las tres primeras explican acumuladamente el 90 % de la varianza. En Olist el número de componentes retenidas debe calcularse con cada muestra individual. <a class="citation" href="#ref-2" title="Ver referencia 2">[2]</a></figcaption></figure>
+<p>En el ejemplo, conservar una sola componente explicaría el 52 %; dos componentes, el 76 %; y tres, el 90 %. No sería correcto afirmar que un modelo con tres componentes tiene una exactitud del 90 %. La primera cifra describe el espacio de variables; la segunda requeriría comparar predicciones con entregas observadas.</p>
+<div class="note"><p>En el notebook de esta semana PCA se aplica únicamente a las variables numéricas. Las cuatro variables categóricas siguen una ruta de preparación independiente mediante One-Hot Encoding. La cantidad de componentes que se retengan no equivale al número total de columnas que recibe finalmente el clasificador.</p></div>
+</section>
+<section id="svd"><h2>SVD: la operación matemática detrás de PCA</h2>
+<p>La descomposición en valores singulares, o SVD, permite expresar una matriz como el producto de otras tres matrices. En una matriz de datos centrados, los vectores singulares indican direcciones relevantes y los valores singulares indican la magnitud de la variabilidad asociada a ellas.</p>
+<div class="math-line" role="math" aria-label="X centrada igual U por Sigma por V transpuesta">X<sub>centrada</sub> = U Σ Vᵀ</div>
+<p>La matriz <code>U</code> contiene direcciones asociadas a las observaciones, <code>Σ</code> contiene los valores singulares y <code>Vᵀ</code> permite recuperar las direcciones de las componentes en el espacio de variables. En una matriz con <em>n</em> observaciones, la varianza de la componente <em>j</em> es proporcional a s<sub>j</sub><sup>2</sup> / (n − 1), donde s<sub>j</sub> es su valor singular.</p>
+<p>No es necesario realizar manualmente la factorización sobre los 24.500 pedidos. En <code>scikit-learn</code>, <code>PCA(svd_solver='full')</code> utiliza SVD para calcular las componentes. Conviene comprender la relación: SVD es una herramienta algebraica; PCA es un método estadístico que utiliza esas direcciones para representar los datos. <a class="citation" href="#ref-2" title="Ver referencia 2">[2]</a></p>
+<pre><code>import numpy as np
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+# Ejemplo didáctico independiente de Olist
+X = np.array([[10, 3], [12, 4], [14, 5],
+              [16, 7], [18, 8], [20, 9]])
+X_esc = StandardScaler().fit_transform(X)
+
+pca = PCA(n_components=2, svd_solver='full')
+pca.fit(X_esc)
+print(pca.explained_variance_ratio_)
+print(pca.components_)</code></pre>
+<p>El código permite observar dos arreglos. <code>explained_variance_ratio_</code> representa la fracción de varianza atribuida a cada componente. <code>components_</code> muestra los pesos de las variables originales dentro de las componentes. Un peso grande no implica causalidad ni convierte la componente en una variable física nueva. <a class="citation" href="#ref-2" title="Ver referencia 2">[2]</a></p>
+</section>
+<section id="preparacion"><h2>El orden de las transformaciones importa</h2>
+<p>Las variables no comparten las mismas unidades. Por ejemplo, <code>peso_total_g</code> se registra en gramos y <code>cantidad_items</code> corresponde a un conteo. Si se aplica PCA directamente a las magnitudes originales, las variables de mayor escala pueden dominar la variación numérica. <a class="citation" href="#ref-2" title="Ver referencia 2">[2]</a></p>
+<p>La preparación utilizada en el laboratorio sigue este orden: imputación de faltantes, estandarización y aplicación opcional de PCA para las variables numéricas. La ruta categórica imputa la categoría más frecuente y aplica One-Hot Encoding. Después, ambas rutas alimentan la regresión logística.</p>
+<figure class="case-figure"><div class="chart-frame"><svg viewBox="0 0 680 292" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flujo desde la muestra hasta la evaluación y selección del modelo sin fuga de información">
+<rect width="680" height="292" fill="white"/><text x="18" y="31" font-family="Arial" font-size="18" fill="#222" font-weight="600">Una evaluación sin mezclar las particiones</text>
+<rect x="20" y="59" width="143" height="48" rx="3" fill="#ececec"/><text x="92" y="78" text-anchor="middle" font-family="Arial" font-size="13" fill="#222">35.000 pedidos</text><text x="92" y="94" text-anchor="middle" font-family="Arial" font-size="11" fill="#555">mismo ID y semilla</text>
+<path d="M164 84 H192" stroke="#aaa" stroke-width="2"/><path d="M186 78 l8 6 -8 6" stroke="#aaa" stroke-width="2" fill="none"/>
+<rect x="197" y="53" width="151" height="60" rx="3" fill="#e4ebe6"/><text x="272" y="77" text-anchor="middle" font-family="Arial" font-size="14" fill="#22412f">Entrenamiento</text><text x="272" y="94" text-anchor="middle" font-family="Arial" font-size="12" fill="#22412f">24.500</text>
+<rect x="197" y="126" width="151" height="58" rx="3" fill="#eef0f6"/><text x="272" y="150" text-anchor="middle" font-family="Arial" font-size="14" fill="#3a4662">Validación</text><text x="272" y="167" text-anchor="middle" font-family="Arial" font-size="12" fill="#3a4662">5.250</text>
+<rect x="197" y="197" width="151" height="58" rx="3" fill="#f6eee5"/><text x="272" y="221" text-anchor="middle" font-family="Arial" font-size="14" fill="#76502f">Prueba final</text><text x="272" y="238" text-anchor="middle" font-family="Arial" font-size="12" fill="#76502f">5.250, reservados</text>
+<path d="M350 83 H380" stroke="#999" stroke-width="2"/><path d="M374 77 l8 6 -8 6" stroke="#999" stroke-width="2" fill="none"/>
+<rect x="384" y="54" width="271" height="60" rx="3" fill="#e4ebe6"/><text x="519" y="77" text-anchor="middle" font-family="Arial" font-size="13" fill="#22412f">Ajustar imputación, escala, PCA</text><text x="519" y="96" text-anchor="middle" font-family="Arial" font-size="13" fill="#22412f">y regresión logística</text>
+<path d="M350 155 H380" stroke="#999" stroke-width="2"/><path d="M374 149 l8 6 -8 6" stroke="#999" stroke-width="2" fill="none"/>
+<rect x="384" y="126" width="271" height="58" rx="3" fill="#eef0f6"/><text x="519" y="149" text-anchor="middle" font-family="Arial" font-size="13" fill="#3a4662">Comparar A–D: métricas</text><text x="519" y="166" text-anchor="middle" font-family="Arial" font-size="13" fill="#3a4662">y costo ilustrativo</text>
+<path d="M350 226 H380" stroke="#999" stroke-width="2"/><path d="M374 220 l8 6 -8 6" stroke="#999" stroke-width="2" fill="none"/>
+<rect x="384" y="197" width="271" height="58" rx="3" fill="#f6eee5"/><text x="519" y="221" text-anchor="middle" font-family="Arial" font-size="13" fill="#76502f">No intervenir durante</text><text x="519" y="238" text-anchor="middle" font-family="Arial" font-size="13" fill="#76502f">la selección</text>
+</svg></div><figcaption><span class="fig-number">Figura 3.</span> Esquema del flujo de aprendizaje y evaluación de la semana 14. Las transformaciones se ajustan solo con entrenamiento; validación se transforma con lo aprendido y prueba permanece reservada. <a class="citation" href="#ref-4" title="Ver referencia 4">[4]</a></figcaption></figure>
+<p>La imputación no debe aprender sus medianas a partir de toda la muestra, ni el escalamiento puede utilizar las medias de validación. En ambos casos aparecería fuga de información: la representación del entrenamiento habría recibido datos que solo deberían estar disponibles al evaluar el modelo. Los objetos <code>Pipeline</code> y <code>ColumnTransformer</code> ayudan a conservar el orden y separar ambas rutas. <a class="citation" href="#ref-4" title="Ver referencia 4">[4]</a></p>
+<div class="definition"><div class="definition-title">El significado de fit y transform</div><p><code>fit</code> aprende parámetros a partir de los datos, por ejemplo una mediana, una desviación estándar o una dirección de PCA. <code>transform</code> aplica a otros registros esos parámetros previamente aprendidos. Por eso, dentro del experimento, las transformaciones se ajustan sobre entrenamiento y luego se aplican a validación.</p></div>
+<p>Esta precaución también afecta la disponibilidad de las variables: la fecha real de entrega y los días efectivamente transcurridos pueden utilizarse para construir el objetivo, pero no como predictores al momento de la compra. Lo mismo ocurre con una reseña publicada después de recibir el producto. <a class="citation" href="#ref-1" title="Ver referencia 1">[1]</a> <a class="citation" href="#ref-4" title="Ver referencia 4">[4]</a></p>
+</section>
+<section id="regularizacion"><h2>Sobreajuste: cuando el modelo aprende demasiado del entrenamiento</h2>
+<p>Un clasificador puede reproducir bien los patrones de la muestra utilizada para ajustarlo y funcionar peor frente a registros nuevos. Este comportamiento se conoce como sobreajuste. El problema no se resuelve automáticamente reduciendo variables: una representación más pequeña puede ayudar, no cambiar el desempeño o eliminar información útil. <a class="citation" href="#ref-2" title="Ver referencia 2">[2]</a> <a class="citation" href="#ref-3" title="Ver referencia 3">[3]</a></p>
+<p>La regresión logística aprende coeficientes que vinculan los predictores con la probabilidad estimada de retraso. Una penalización L2 limita la magnitud de esos coeficientes. El objetivo es desincentivar soluciones excesivamente sensibles a las particularidades de los datos de entrenamiento. <a class="citation" href="#ref-3" title="Ver referencia 3">[3]</a></p>
+<div class="math-line" role="math" aria-label="Función de pérdida más penalización L2">Pérdida del modelo + λ × Σ w<sub>j</sub><sup>2</sup></div>
+<p>En esta expresión, w<sub>j</sub> representa el coeficiente de una variable y λ controla la contribución de la penalización. Es una representación conceptual de regularización L2; la formulación exacta depende del algoritmo y su implementación.</p>
+<p>En <code>LogisticRegression</code> el parámetro <code>C</code> controla inversamente la intensidad de regularización: valores pequeños producen una penalización más fuerte y valores grandes permiten mayor libertad a los coeficientes. No debe confundirse con la letra C utilizada en la matriz de confusión. <a class="citation" href="#ref-3" title="Ver referencia 3">[3]</a></p>
+<table><thead><tr><th>Valor de C</th><th>Lectura</th><th>Riesgo o beneficio posible</th></tr></thead><tbody>
+<tr><td data-label="Valor de C"><code>0.1</code></td><td data-label="Lectura">Regularización más fuerte</td><td data-label="Riesgo o beneficio posible">Puede controlar inestabilidad, pero también reducir el ajuste a señales útiles.</td></tr>
+<tr><td data-label="Valor de C"><code>1.0</code></td><td data-label="Lectura">Valor de referencia del ejercicio</td><td data-label="Riesgo o beneficio posible">Permite un punto común para comparar con y sin PCA.</td></tr>
+<tr><td data-label="Valor de C"><code>10.0</code></td><td data-label="Lectura">Regularización más débil</td><td data-label="Riesgo o beneficio posible">Puede mejorar el ajuste o incrementar la sensibilidad al entrenamiento.</td></tr>
+</tbody></table>
+<p>En las configuraciones de esta semana también se usa <code>class_weight='balanced'</code>. Ese ajuste da más peso a la clase menos frecuente durante el aprendizaje. No elimina por sí solo el desbalance ni obliga al modelo a obtener mejor precisión. Por ello, se mantienen los mismos pesos de clase y el umbral de clasificación 0,50 durante los cuatro experimentos.</p>
+</section>
+<section id="experimentos"><h2>Modificar una condición a la vez</h2>
+<p>Para evaluar una mejora es necesario disponer de una referencia reproducible. El notebook propone cuatro configuraciones comparables. El experimento A no utiliza PCA; el B incorpora PCA manteniendo <code>C=1.0</code>; los experimentos C y D mantienen PCA y modifican la regularización. Así puede separarse la contribución de cada cambio.</p>
+<table><thead><tr><th>Experimento</th><th>Variables numéricas</th><th>C</th><th>Comparación relevante</th></tr></thead><tbody>
+<tr><td data-label="Experimento">A</td><td data-label="Variables numéricas">Originales, sin PCA</td><td data-label="C">1.0</td><td data-label="Comparación relevante">Punto de referencia S14</td></tr>
+<tr><td data-label="Experimento">B</td><td data-label="Variables numéricas">PCA, 90 % de varianza</td><td data-label="C">1.0</td><td data-label="Comparación relevante">B frente a A: efecto de PCA</td></tr>
+<tr><td data-label="Experimento">C</td><td data-label="Variables numéricas">PCA, 90 % de varianza</td><td data-label="C">0.1</td><td data-label="Comparación relevante">C frente a B: penalización mayor</td></tr>
+<tr><td data-label="Experimento">D</td><td data-label="Variables numéricas">PCA, 90 % de varianza</td><td data-label="C">10.0</td><td data-label="Comparación relevante">D frente a B: penalización menor</td></tr>
+</tbody></table>
+<p>La referencia A es la referencia interna de esta comparación. Si el clasificador desarrollado en la semana 12 utilizó una configuración diferente, por ejemplo otro valor de <code>class_weight</code>, no es correcto atribuir cualquier diferencia exclusivamente a PCA o a C. La comparación controlada es la que se realiza entre A, B, C y D bajo las condiciones comunes del notebook de esta semana.</p>
+<h3>La bitácora de experimentos</h3>
+<p>Una tabla de resultados debe registrar el ID, la semilla, la huella de la muestra, el preprocesamiento, la configuración del modelo, las métricas de validación y el costo ilustrativo. Si una modificación mejora F1 pero aumenta los falsos negativos, esa situación debe quedar visible; no basta con etiquetar el resultado como mejor.</p>
+<p>La búsqueda automatizada de hiperparámetros, por ejemplo mediante <code>GridSearchCV</code>, puede ser útil en ejercicios de mayor alcance. La actividad actual utiliza una comparación controlada de configuraciones para que se comprenda qué se modifica y por qué. Repetir muchas pruebas sobre la misma validación termina adaptando las decisiones a ese conjunto; para búsquedas extensas es preferible emplear validación cruzada dentro de entrenamiento y conservar datos independientes para comprobar las elecciones. <a class="citation" href="#ref-4" title="Ver referencia 4">[4]</a></p>
+</section>
+<section id="metricas"><h2>¿Un modelo mejora si tiene mayor Accuracy?</h2>
+<p>En clasificación binaria se distinguen cuatro resultados. Un verdadero positivo (VP) es un pedido tardío correctamente señalado; un falso negativo (FN) es un pedido tardío que el modelo considera puntual; un falso positivo (FP) es un pedido puntual señalado como tardío; y un verdadero negativo (VN) es una entrega puntual correctamente reconocida.</p>
+<table><thead><tr><th>Métrica</th><th>Qué resume</th><th>Por qué importa en Olist</th></tr></thead><tbody>
+<tr><td data-label="Métrica">Accuracy</td><td data-label="Qué resume">Proporción total de aciertos.</td><td data-label="Por qué importa en Olist">Puede ser alta incluso si no se detecta la clase minoritaria.</td></tr>
+<tr><td data-label="Métrica">Precision</td><td data-label="Qué resume">VP / (VP + FP).</td><td data-label="Por qué importa en Olist">Indica cuántas alertas de retraso corresponden a retrasos reales.</td></tr>
+<tr><td data-label="Métrica">Recall</td><td data-label="Qué resume">VP / (VP + FN).</td><td data-label="Por qué importa en Olist">Indica qué proporción de los pedidos tardíos se logra identificar.</td></tr>
+<tr><td data-label="Métrica">F1</td><td data-label="Qué resume">Media armónica de Precision y Recall.</td><td data-label="Por qué importa en Olist">Ofrece un equilibrio resumido entre falsas alertas y retrasos no identificados.</td></tr>
+<tr><td data-label="Métrica">Average Precision (AP)</td><td data-label="Qué resume">Resumen de la curva Precision–Recall a distintos umbrales.</td><td data-label="Por qué importa en Olist">Evalúa el ordenamiento de pedidos por probabilidad estimada, sin limitarse al umbral de 0,50. <a class="citation" href="#ref-5" title="Ver referencia 5">[5]</a></td></tr>
+</tbody></table>
+<p>Las métricas no responden todas a la misma pregunta. Si un equipo de logística tiene capacidad de revisar pocos pedidos, le puede interesar evitar un número excesivo de alertas. Si la consecuencia de ignorar una entrega tardía es mayor, podría priorizar Recall y aceptar más falsos positivos. La decisión depende de la finalidad y de los costos asociados. <a class="citation" href="#ref-5" title="Ver referencia 5">[5]</a></p>
+<h3>Un ejemplo con costos</h3>
+<p>Para el laboratorio se utiliza un supuesto didáctico: R$ 8 por falso positivo y R$ 35 por falso negativo. El costo estimado se calcula como <code>8 * FP + 35 * FN</code>. Las cifras no proceden de una contabilidad real de Olist; se utilizan para analizar cómo una métrica puede traducirse en un criterio empresarial. <a class="citation" href="#ref-1" title="Ver referencia 1">[1]</a></p>
+<figure class="case-figure"><div class="chart-frame"><svg viewBox="0 0 680 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ejemplo ilustrativo de dos modelos con diferente costo debido a falsos negativos y falsos positivos">
+<rect width="680" height="250" fill="white"/><text x="18" y="28" font-family="Arial" font-size="18" fill="#222" font-weight="600">El costo cambia la decisión</text>
+<text x="19" y="57" font-family="Arial" font-size="12" fill="#666">Supuesto del reto: R$ 8 por FP y R$ 35 por FN</text>
+<text x="20" y="97" font-family="Arial" font-size="14" fill="#333">Modelo A</text>
+<rect x="123" y="75" width="410" height="32" fill="#efefef"/><rect x="123" y="75" width="333" height="32" fill="#8fa69d"/><text x="136" y="96" font-family="Arial" fill="#18302a" font-size="12">R$ 2.550</text><text x="543" y="96" font-family="Arial" fill="#555" font-size="12">FP 100, FN 50</text>
+<text x="20" y="150" font-family="Arial" font-size="14" fill="#333">Modelo B</text>
+<rect x="123" y="127" width="410" height="32" fill="#efefef"/><rect x="123" y="127" width="278" height="32" fill="#bccbbd"/><text x="136" y="148" font-family="Arial" fill="#18302a" font-size="12">R$ 2.130</text><text x="543" y="148" font-family="Arial" fill="#555" font-size="12">FP 135, FN 30</text>
+<text x="20" y="205" font-family="Arial" font-size="13" fill="#333">A: 8 × 100 + 35 × 50 = R$ 2.550</text>
+<text x="20" y="225" font-family="Arial" font-size="13" fill="#333">B: 8 × 135 + 35 × 30 = R$ 2.130</text>
+</svg></div><figcaption><span class="fig-number">Figura 4.</span> Ejemplo inventado de dos clasificadores. Aunque B genera más alertas equivocadas, reduce los pedidos tardíos no detectados y produce un costo ilustrativo menor. No son los resultados de ninguno de los estudiantes.</figcaption></figure>
+<p>En el ejemplo, A produce 100 FP y 50 FN, mientras B produce 135 FP y 30 FN. El costo calculado es R$ 2.550 para A y R$ 2.130 para B. Esto no demuestra que B sea universalmente superior: la comparación depende de que los costos supuestos, la muestra y el umbral sean pertinentes. Tampoco incluye el costo fijo de operar un sistema real de alertas.</p>
+<div class="note"><p>Para comparar costos, mantenga la misma partición de validación y el mismo umbral. Si se modifica el umbral, ese cambio debe tratarse como otro experimento. Una diferencia numérica pequeña en métricas o costo no demuestra, por sí sola, una mejora estadísticamente concluyente.</p></div>
+</section>
+<section id="ks"><h2>Kolmogorov-Smirnov: comparar distribuciones</h2>
+<p>La prueba de Kolmogorov-Smirnov (KS) para dos muestras contrasta si la distribución de una variable es compatible entre dos grupos. En esta actividad se compara <code>valor_flete</code> entre entrenamiento y validación. Su propósito es describir una diferencia distributiva potencial entre particiones, no seleccionar directamente el clasificador. <a class="citation" href="#ref-7" title="Ver referencia 7">[7]</a> <a class="citation" href="#ref-6" title="Ver referencia 6">[6]</a></p>
+<p>La prueba utiliza las funciones de distribución acumulada empírica (ECDF). Para cada valor x, la ECDF indica qué proporción de observaciones es menor o igual a x. El estadístico D representa la separación vertical máxima entre ambas curvas. <a class="citation" href="#ref-6" title="Ver referencia 6">[6]</a> <a class="citation" href="#ref-7" title="Ver referencia 7">[7]</a></p>
+<div class="math-line" role="math" aria-label="D máximo valor absoluto de F entrenamiento menos F validación">D = sup<sub>x</sub> |F<sub>entrenamiento</sub>(x) − F<sub>validación</sub>(x)|</div>
+<figure class="case-figure"><div class="chart-frame"><svg viewBox="0 0 680 310" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dos funciones de distribución acumuladas empíricas, con separación vertical D como estadístico KS">
+<rect width="680" height="310" fill="white"/><text x="16" y="30" font-family="Arial" font-size="18" font-weight="600" fill="#222">La prueba KS compara distribuciones, no modelos</text>
+<line x1="67" y1="267" x2="635" y2="267" stroke="#aaa" stroke-width="1.5"/><line x1="67" y1="267" x2="67" y2="58" stroke="#aaa" stroke-width="1.5"/>
+<text x="568" y="295" fill="#666" font-family="Arial" font-size="12">valor_flete</text><text x="24" y="165" transform="rotate(-90 24 165)" fill="#666" font-family="Arial" font-size="12">F(x), fracción acumulada</text>
+<path d="M68 265 H131 V245 H178 V225 H238 V200 H305 V177 H367 V135 H431 V106 H492 V84 H562 V61 H634" fill="none" stroke="#4a695c" stroke-width="3"/>
+<path d="M68 265 H131 V250 H178 V234 H238 V211 H305 V155 H367 V122 H431 V104 H492 V80 H562 V61 H634" fill="none" stroke="#a36a55" stroke-width="3"/>
+<line x1="305" y1="154" x2="305" y2="178" stroke="#444" stroke-width="2"/>
+<path d="M300 159 L305 153 L310 159 M300 172 L305 178 L310 172" stroke="#444" stroke-width="1.5" fill="none"/>
+<text x="317" y="174" font-family="Arial" font-weight="600" font-size="14" fill="#333">D</text>
+<line x1="423" y1="225" x2="451" y2="225" stroke="#4a695c" stroke-width="3"/><text x="458" y="229" font-family="Arial" font-size="12" fill="#444">Entrenamiento</text>
+<line x1="423" y1="243" x2="451" y2="243" stroke="#a36a55" stroke-width="3"/><text x="458" y="247" font-family="Arial" font-size="12" fill="#444">Validación</text>
+<text x="81" y="56" fill="#777" font-family="Arial" font-size="12">Representación esquemática, no resultado del laboratorio</text>
+</svg></div><figcaption><span class="fig-number">Figura 5.</span> Ejemplo conceptual de dos distribuciones acumuladas. D representa la máxima separación absoluta. La distancia, las curvas y sus valores deberán obtenerse con valor_flete de las particiones reales. <a class="citation" href="#ref-6" title="Ver referencia 6">[6]</a></figcaption></figure>
+<h3>Hipótesis y lectura del valor p</h3>
+<p>La hipótesis nula, H0, plantea que la variable sigue la misma distribución poblacional en los dos grupos. La hipótesis alternativa, H1, establece que las distribuciones difieren. Como regla de decisión del laboratorio se utiliza α = 0,05. <a class="citation" href="#ref-7" title="Ver referencia 7">[7]</a> <a class="citation" href="#ref-6" title="Ver referencia 6">[6]</a></p>
+<table><thead><tr><th>Resultado</th><th>Decisión estadística</th><th>Interpretación adecuada</th></tr></thead><tbody>
+<tr><td data-label="Resultado">p &lt; 0,05</td><td data-label="Decisión estadística">Rechazar H0</td><td data-label="Interpretación adecuada">Existe evidencia de diferencia entre las distribuciones, bajo los supuestos de la prueba.</td></tr>
+<tr><td data-label="Resultado">p ≥ 0,05</td><td data-label="Decisión estadística">No rechazar H0</td><td data-label="Interpretación adecuada">No se dispone de evidencia suficiente de diferencia. No significa que las distribuciones sean idénticas.</td></tr>
+</tbody></table>
+<pre><code>from scipy.stats import ks_2samp
+
+# Ejemplo aislado con dos grupos ficticios
+flete_a = [8, 10, 11, 12, 14, 15, 18, 20]
+flete_b = [9, 11, 13, 14, 16, 18, 19, 24]
+
+resultado = ks_2samp(flete_a, flete_b,
+                     alternative='two-sided')
+print('Estadístico D:', resultado.statistic)
+print('Valor p:', resultado.pvalue)</code></pre>
+<p>El ejemplo permite reconocer cómo se reportan los dos valores, pero no resuelve la prueba sobre la muestra de Olist. En el laboratorio los arreglos correspondientes se obtienen directamente de las columnas <code>train['valor_flete']</code> y <code>valid['valor_flete']</code>.</p>
+<h3>Limitaciones que deben mencionarse</h3>
+<p>La prueba KS clásica se formula para distribuciones continuas y muestras independientes. <a class="citation" href="#ref-6" title="Ver referencia 6">[6]</a> En los valores monetarios pueden existir empates por redondeo a centavos o importes repetidos. Por ello, el valor p debe interpretarse con cautela si hay muchos empates; además, muestras grandes pueden detectar diferencias muy pequeñas desde el punto de vista operativo. <a class="citation" href="#ref-6" title="Ver referencia 6">[6]</a></p>
+<p>Conviene revisar simultáneamente el valor D, las distribuciones gráficas, el tamaño de cada grupo y medidas descriptivas como mediana y cuartiles. Un valor p no informa por sí solo la magnitud del efecto. Tampoco permite concluir que dos modelos tienen el mismo desempeño, ni garantiza que la partición aleatoria sea representativa de todos los pedidos futuros.</p>
+<div class="definition"><div class="definition-title">Una distinción importante</div><p>El KS aplicado a <code>valor_flete</code> responde a una pregunta sobre la distribución de una variable en dos conjuntos. Precision, Recall, F1 y AP responden a preguntas sobre predicción. Son análisis complementarios, pero no intercambiables. <a class="citation" href="#ref-5" title="Ver referencia 5">[5]</a> <a class="citation" href="#ref-6" title="Ver referencia 6">[6]</a></p></div>
+</section>
+<section id="lectura-resultados"><h2>De la métrica a una conclusión defendible</h2>
+<p>La última parte de la actividad no consiste en repetir definiciones: requiere leer los resultados del notebook y sostener una elección. Una recomendación adecuada debe indicar qué cambió entre experimentos, qué sucedió con los errores y cuál es la implicación empresarial. Debe distinguir hechos observados de inferencias o supuestos.</p>
+<div class="question"><h3>Cuando PCA retiene pocas componentes</h3><p>¿Cuántas variables numéricas se utilizaron inicialmente? ¿Cuántas componentes explican al menos el 90 % de la varianza? ¿Qué ocurrió con Recall, F1 y los falsos negativos al comparar B contra A? Si la reducción fue importante pero la predicción empeoró, la conclusión debe registrar ambas observaciones.</p></div>
+<div class="question"><h3>Cuando dos regularizaciones producen resultados parecidos</h3><p>Compare C y D respecto a B. ¿La diferencia de costo es suficientemente relevante para justificar el cambio? ¿La elección se sostiene en una sola métrica o en una combinación de evidencia técnica y operativa? No atribuya a la regularización cambios que podrían deberse a otra condición no controlada.</p></div>
+<div class="question"><h3>Cuando KS no rechaza la hipótesis nula</h3><p>Informe D y p, registre el tamaño de los conjuntos y explique qué comparación se realizó. Evite escribir que las distribuciones son iguales o que el modelo quedó validado. La ausencia de evidencia suficiente de diferencia no demuestra equivalencia. <a class="citation" href="#ref-6" title="Ver referencia 6">[6]</a> <a class="citation" href="#ref-7" title="Ver referencia 7">[7]</a></p></div>
+<p>El repositorio debe conservar las configuraciones, resultados y decisiones junto con los scripts o notebooks ejecutables. Un cambio que no produce mejora también es un resultado del experimento. Documentarlo permite comprender por qué se mantuvo o descartó una alternativa.</p>
+<h3>Conceptos que conviene diferenciar</h3>
+<table class="glossary"><thead><tr><th>Concepto</th><th>Significado en esta semana</th></tr></thead><tbody>
+<tr><td data-label="Concepto">PCA</td><td data-label="Significado en esta semana">Proyección lineal que resume varianza mediante componentes.</td></tr>
+<tr><td data-label="Concepto">SVD</td><td data-label="Significado en esta semana">Descomposición matricial empleada para obtener direcciones de PCA.</td></tr>
+<tr><td data-label="Concepto">Varianza explicada</td><td data-label="Significado en esta semana">Fracción de variabilidad de entrada representada por una componente.</td></tr>
+<tr><td data-label="Concepto">Hiperparámetro</td><td data-label="Significado en esta semana">Configuración fijada antes del ajuste, como C o el porcentaje de varianza de PCA.</td></tr>
+<tr><td data-label="Concepto">Regularización</td><td data-label="Significado en esta semana">Penalización que restringe la magnitud de coeficientes del modelo.</td></tr>
+<tr><td data-label="Concepto">Sobreajuste</td><td data-label="Significado en esta semana">Buen ajuste sobre entrenamiento que no se sostiene necesariamente en datos nuevos.</td></tr>
+<tr><td data-label="Concepto">Fuga de información</td><td data-label="Significado en esta semana">Uso al ajustar el modelo de datos que deberían permanecer fuera de ese proceso.</td></tr>
+<tr><td data-label="Concepto">AP</td><td data-label="Significado en esta semana">Resumen de la relación Precision–Recall a distintos umbrales.</td></tr>
+<tr><td data-label="Concepto">KS de dos muestras</td><td data-label="Significado en esta semana">Prueba que contrasta distribuciones mediante la máxima distancia entre ECDF.</td></tr>
+<tr><td data-label="Concepto">Bitácora de experimentos</td><td data-label="Significado en esta semana">Registro reproducible de configuraciones, métricas, decisiones y resultados.</td></tr>
+</tbody></table>
+</section>
+<section id="referencias"><h2>Referencias bibliográficas</h2>
+<p>La lectura combina el caso y los procedimientos del laboratorio Olist con las definiciones técnicas de PCA, regresión logística y contraste KS. Los ejemplos numéricos y las figuras de esta guía son ilustrativos y no representan resultados calculados sobre muestras de estudiantes.</p>
+<ol class="references" aria-label="Referencias bibliográficas citadas">
+<li id="ref-1">James, G., Witten, D., Hastie, T., Tibshirani, R. y Taylor, J. (2023). <em>An Introduction to Statistical Learning: With Applications in Python</em>. Springer. <a href="https://doi.org/10.1007/978-3-031-38747-0">https://doi.org/10.1007/978-3-031-38747-0</a></li>
+<li id="ref-2">scikit-learn. <em>Principal component analysis (PCA)</em>. <a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html">https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html</a></li>
+<li id="ref-3">scikit-learn. <em>LogisticRegression</em>. <a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html">https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html</a></li>
+<li id="ref-4">scikit-learn. <em>Common pitfalls and recommended practices</em>. <a href="https://scikit-learn.org/stable/common_pitfalls.html">https://scikit-learn.org/stable/common_pitfalls.html</a></li>
+<li id="ref-5">scikit-learn. <em>average_precision_score</em>. <a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.average_precision_score.html">https://scikit-learn.org/stable/modules/generated/sklearn.metrics.average_precision_score.html</a></li>
+<li id="ref-6">SciPy. <em>scipy.stats.ks_2samp</em>. <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ks_2samp.html">https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ks_2samp.html</a></li>
+<li id="ref-7">Berger, V. W. y Zhou, Y. (2005). Kolmogorov–Smirnov Tests. En <em>Encyclopedia of Biostatistics</em>. Wiley. <a href="https://doi.org/10.1002/0470013192.bsa332">https://doi.org/10.1002/0470013192.bsa332</a></li>
+<li id="ref-8">Olist y Sionek, A. (2018). <em>Brazilian E-Commerce Public Dataset by Olist</em> [conjunto de datos]. Kaggle. <a href="https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce">https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce</a></li>
+</ol>
+</section>
+</article><footer><div>Editor: Elias Buitrago Bolivar | Data Analytics, 2026-2.</div></footer>
+</body></html>

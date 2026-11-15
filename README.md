@@ -40,7 +40,7 @@ docs/SXX/         guía técnica de cada semana (docs/ guarda el PDF del reto)
 | Modelo | Accuracy | Recall | F1 | ROC-AUC | AP | Costo (R$) |
 |---|---|---|---|---|---|---|
 | Referencia (siempre "a tiempo") | 0,932 | 0,000 | 0,000 | – | – | 12.425 |
-| Regresión logística (`class_weight='balanced'`) | 0,661 | 0,642 | 0,204 | 0,705 | 0,145 | 17.685 |
+| Regresión logística (`class_weight='balanced'`) | 0,661 | 0,645 | 0,205 | 0,705 | 0,145 | 17.642 |
 
 Regresión Ridge (días de entrega): MAE = 5,27 días. Huella de la muestra: `78a4ad412176`.
 

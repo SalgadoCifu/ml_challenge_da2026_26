@@ -1,0 +1,114 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>PCA y evaluación de mejoras al modelo | Data Analytics</title><style>
+:root {
+  --ink: rgba(0,0,0,.84); --muted: rgba(0,0,0,.56);
+  --line: rgba(0,0,0,.12); --soft:#f7f7f7; --link:#1a8917;
+  --serif: medium-content-serif-font, Georgia, Cambria,"Times New Roman",Times,serif;
+  --sans: sohne,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  --display: gt-super,Georgia,Cambria,"Times New Roman",Times,serif;
+}
+* {box-sizing:border-box}
+html {scroll-behavior:smooth}
+body {margin:0;background:#fff;color:var(--ink);font-family:var(--serif);font-size:21px;line-height:1.58;letter-spacing:-.003em}
+.topbar {border-bottom:1px solid var(--line);font-family:var(--sans)}
+.topbar-inner {width:min(1080px,calc(100% - 40px));min-height:58px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.site-title {color:#242424;font-size:15px;font-weight:600;letter-spacing:0}
+.site-meta {color:var(--muted);font-size:13px;letter-spacing:0}
+article {width:min(680px,calc(100% - 40px));margin:58px auto 92px}
+.eyebrow {margin:0 0 12px;color:#8250df;font-family:var(--sans);font-size:13px;font-weight:400;letter-spacing:.02em;text-transform:uppercase}
+h1 {margin:0;color:#242424;font-family:var(--display);font-size:54px;font-weight:400;line-height:1.08;letter-spacing:-.03em}
+.subtitle {margin:18px 0 16px;color:rgba(0,0,0,.62);font-family:var(--sans);font-size:20px;line-height:1.45;letter-spacing:0}
+.byline {margin:0 0 42px;color:var(--muted);font-family:var(--sans);font-size:14px;line-height:1.5;letter-spacing:0}
+p {margin:0 0 26px} .lead {font-size:21px}
+h2 {margin:52px 0 18px;color:#242424;font-family:var(--sans);font-size:28px;font-weight:600;line-height:1.25;letter-spacing:-.015em}
+h3 {margin:36px 0 12px;color:#242424;font-family:var(--sans);font-size:21px;font-weight:600;line-height:1.35;letter-spacing:-.01em}
+ul,ol {margin:0 0 26px;padding-left:26px} li {margin:8px 0}
+a {color:inherit;text-decoration:underline;text-decoration-color:rgba(0,0,0,.35);text-underline-offset:2px}
+a:hover {text-decoration-color:currentColor}
+code {padding:2px 5px;border-radius:3px;background:#f2f2f2;color:#242424;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.82em}
+pre {margin:22px 0 28px;padding:18px 20px;overflow-x:auto;background:#f7f7f7;border:1px solid var(--line);border-radius:3px;color:#242424;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13.5px;line-height:1.65}
+pre code {padding:0;background:none;font-size:inherit}
+.note {margin:30px 0;padding:16px 20px;border-left:3px solid #242424;background:var(--soft)} .note p {margin:0}
+.definition {margin:30px 0;padding:18px 20px;border:1px solid var(--line)}
+.definition-title {margin-bottom:8px;color:#242424;font-family:var(--sans);font-size:16px;font-weight:600;line-height:1.4}
+.definition p {margin:0}
+table {width:100%;margin:26px 0 34px;border-collapse:collapse;font-family:var(--sans);font-size:15px;line-height:1.45;letter-spacing:0}
+th,td {padding:12px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.mini-nav {font-family:var(--sans);font-size:15px;line-height:1.6;margin:28px 0 30px}
+.small, figcaption {color:var(--muted);font-family:var(--sans);font-size:13px;line-height:1.5}
+.references {font-family:var(--sans);font-size:14px;line-height:1.55}
+.references a {color:#0969da;text-decoration-color:#0969da;text-underline-offset:2px}
+.case-figure {margin:32px 0 39px} .chart-frame {padding:11px 6px 0;border:1px solid var(--line);background:#fff}
+.chart-frame svg {display:block;width:100%;height:auto} .case-figure figcaption {margin-top:11px}
+.fig-number {color:#242424;font-weight:600}
+footer {border-top:1px solid var(--line);padding:28px 20px 44px;color:var(--muted);font-family:var(--sans);font-size:13px;line-height:1.5}
+footer div {width:min(680px,100%);margin:0 auto}
+@media screen and (max-width: 760px) {
+ body{font-size:19px;line-height:1.55}article{margin-top:42px}.subtitle{font-size:18px}h2{font-size:25px}
+ table thead{display:none}table,table tbody,table tr,table td{display:block;width:100%}
+ table tbody tr{margin:0 0 14px;padding:5px 13px;border:1px solid var(--line);border-radius:5px}
+ table tbody td{border:0;border-bottom:1px solid var(--line);padding:10px 0;font-size:14px;line-height:1.5;overflow-wrap:anywhere;white-space:normal}
+ table tbody td:last-child{border-bottom:0}
+ table tbody td::before{display:block;content:attr(data-label);font-family:var(--sans);font-size:11px;line-height:1.4;letter-spacing:.04em;text-transform:uppercase;font-weight:700;color:#606060;padding-bottom:4px}
+ pre{font-size:12px;padding:14px 11px}
+}
+@media print {
+ @page{size:A4;margin:16mm 17mm 17mm}
+ html,body{background:white!important}body{font-size:11.6px;line-height:1.37}
+ article{margin:0 auto;width:100%;max-width:100%}h1{font-size:30px}
+ h2{font-size:19px;margin:18px 0 7px}h3{font-size:14px;margin:13px 0 5px}
+ h2,h3{break-after:avoid}p,ul,ol{margin-bottom:9px}
+ .subtitle{font-size:15px}.lead{font-size:14px}.byline{margin-bottom:18px}
+ table{font-size:9.5px;line-height:1.27;margin:9px 0 12px}th,td{padding:6px 7px}
+ tr,figure,.note,.definition{break-inside:avoid}
+ .topbar,footer{display:none}.note,.definition{margin:16px 0;padding:11px 13px}
+ .case-figure{margin:12px 0 15px}
+}
+</style></head><body><header class="topbar"><div class="topbar-inner"><div class="site-title">Data Analytics</div><div class="site-meta">Ingeniería de Sistemas, 2026-2</div></div></header><article><p class="eyebrow">Semana 14. Laboratorio 2. Reto tercer corte</p><h1>PCA y evaluación de mejoras al modelo</h1><p class="subtitle">Predicción de entregas tardías en Olist: reducción de dimensionalidad, regularización y contrastes estadísticos.</p><p class="byline">Data Analytics ML Challenge, 2026-2 | Elias Buitrago Bolivar | Universidad Central</p>
+<p class="lead">Una empresa puede ajustar un modelo varias veces, pero el resultado no mejora necesariamente por incorporar una técnica nueva. En esta segunda parte del reto Olist se examinará si reducir variables y cambiar la regularización permite identificar mejor los pedidos que llegarían después de la fecha prometida.</p>
+<p>La clase de la semana 13 no pudo desarrollarse. Por ello, la reducción de dimensionalidad prevista para esa semana se incorpora a la actividad de la semana 14. Se mantiene el problema de negocio, el repositorio individual y la muestra asignada durante la semana 12.</p>
+<div class="definition"><div class="definition-title">Pregunta de análisis</div><p>¿Es preferible el modelo que registra más aciertos, el que identifica más entregas tardías o el que representa un menor costo para la empresa? La respuesta deberá sustentarse con los resultados de cada estudiante.</p></div>
+<p class="mini-nav">Contenido: <a href="#partida">datos de partida</a> | <a href="#pca">PCA y SVD</a> | <a href="#comparacion">comparación de modelos</a> | <a href="#estadistica">validación estadística</a> | <a href="#actividad">actividad entregable</a>.</p>
+<section id="partida"><h2>Se trabaja con los mismos pedidos</h2>
+<p>Cada estudiante conserva el ID de la semana 12. Este ID determina una muestra reproducible de 35.000 pedidos, con 24.500 observaciones para entrenamiento, 5.250 para validación y 5.250 para la evaluación final. Los pedidos reservados para prueba no pueden utilizarse para elegir el mejor modelo.</p>
+<p>El cuaderno suministrado vuelve a preparar las siete tablas de Olist para que pueda ejecutarse en Google Colab. No se cambia la unidad de análisis: cada fila representa un pedido. Tampoco se incluyen fechas de entrega real ni variables conocidas después de la compra entre los predictores.</p>
+</section>
+<section id="pca"><h2>¿Para qué reducir las variables?</h2>
+<p>Algunas variables numéricas contienen información relacionada. Por ejemplo, el valor de los productos y el precio máximo pueden variar conjuntamente. PCA construye nuevas variables, denominadas componentes principales, a partir de combinaciones de las anteriores. La primera componente recoge la mayor variación disponible; las siguientes agregan información sin repetir la dirección de las anteriores.</p>
+<p>Antes de aplicar PCA se deben completar los faltantes y estandarizar las variables numéricas. Ambas transformaciones se ajustan con entrenamiento para evitar que información del conjunto de validación intervenga en la construcción del modelo. La descomposición en valores singulares, conocida como SVD, es una de las herramientas matemáticas con las que puede calcularse PCA.</p>
+<figure class="case-figure"><div class="chart-frame"><svg viewBox="0 0 660 284" role="img" aria-labelledby="pca_t pca_d" xmlns="http://www.w3.org/2000/svg">
+<title id="pca_t">Compresión de variables con PCA</title><desc id="pca_d">Matriz de variables originales transformada en componentes y análisis de la varianza explicada</desc>
+<rect width="660" height="284" fill="white"/><text x="19" y="28" font-family="Arial" font-size="17" font-weight="600" fill="#242424">Menos dimensiones, información resumida</text>
+<text x="22" y="57" font-family="Arial" font-size="12" fill="#666">Variables iniciales</text><text x="275" y="57" font-family="Arial" font-size="12" fill="#666">PCA</text><text x="410" y="57" font-family="Arial" font-size="12" fill="#666">Componentes</text>
+<g stroke="#d2d2d2" stroke-width="1.1"><path d="M180 91 L264 136"/><path d="M180 116 L264 136"/><path d="M180 141 L264 136"/><path d="M180 166 L264 136"/><path d="M180 191 L264 136"/></g>
+<g font-family="Arial" font-size="12" fill="#333"><rect x="25" y="78" width="153" height="26" fill="#eeeeee"/><text x="36" y="96">Precio / flete</text><rect x="25" y="106" width="153" height="26" fill="#eeeeee"/><text x="36" y="124">Peso / volumen</text><rect x="25" y="134" width="153" height="26" fill="#eeeeee"/><text x="36" y="152">Plazo prometido</text><rect x="25" y="162" width="153" height="26" fill="#eeeeee"/><text x="36" y="180">Otras variables</text></g>
+<rect x="262" y="106" width="91" height="70" fill="#ede7f5" stroke="#9572b5"/><text x="307" y="136" fill="#403149" font-family="Arial" font-size="18" text-anchor="middle">PCA</text><text x="307" y="156" fill="#403149" font-family="Arial" font-size="11" text-anchor="middle">entrenamiento</text>
+<path d="M353 141 L402 141" stroke="#999" stroke-width="1.6"/><path d="M397 135 L404 141 L397 147" fill="none" stroke="#999" stroke-width="1.6"/>
+<rect x="410" y="81" width="214" height="35" fill="#e6ebe8"/><text x="422" y="103" font-family="Arial" font-size="13" fill="#284537">Componente 1</text><rect x="410" y="121" width="184" height="35" fill="#e6ebe8"/><text x="422" y="143" font-family="Arial" font-size="13" fill="#284537">Componente 2</text><rect x="410" y="161" width="144" height="35" fill="#e6ebe8"/><text x="422" y="183" font-family="Arial" font-size="13" fill="#284537">Otras componentes</text>
+<line x1="20" x2="640" y1="224" y2="224" stroke="#ddd"/><text x="22" y="246" fill="#555" font-family="Arial" font-size="12">La cantidad retenida se obtiene del análisis de varianza acumulada.</text><text x="22" y="264" fill="#555" font-family="Arial" font-size="12">PCA no indica por sí solo si las predicciones serán mejores.</text></svg></div>
+<figcaption><span class="fig-number">Figura 1.</span> Esquema conceptual de la reducción de dimensionalidad. La gráfica de varianza acumulada y el número de componentes deben obtenerse con la muestra individual de cada estudiante.</figcaption></figure>
+<p>En el laboratorio se conservará el número mínimo de componentes que explique al menos el 90 % de la varianza de las variables numéricas. Este umbral es una decisión de trabajo, no una garantía de obtener una mejor clasificación. Las cuatro variables categóricas mantienen su preparación por separado.</p>
+<h3>¿Qué debe comprobarse?</h3><p>El cuaderno produce una curva de varianza acumulada. A partir de ella se debe informar cuántas variables numéricas se utilizaron inicialmente, cuántas componentes se conservaron y qué información podría perderse al comprimirlas.</p></section>
+<section id="comparacion"><h2>Un experimento que permita comparar</h2>
+<p>Para saber si existe alguna mejora se necesita un punto de referencia. Los cuatro modelos usan la misma muestra, la misma partición y el mismo umbral de clasificación de 0,50. Solo cambian la reducción de dimensionalidad y la fuerza de la regularización.</p>
+<table><thead><tr><th>Experimento</th><th>Transformación</th><th>Valor de C</th></tr></thead><tbody><tr><td data-label="Experimento">A. Modelo de referencia</td><td data-label="Transformación">Variables numéricas sin PCA</td><td data-label="Valor de C">1,0</td></tr><tr><td data-label="Experimento">B. Reducción de dimensión</td><td data-label="Transformación">PCA con 90 % de varianza</td><td data-label="Valor de C">1,0</td></tr><tr><td data-label="Experimento">C. Mayor penalización</td><td data-label="Transformación">PCA con 90 % de varianza</td><td data-label="Valor de C">0,1</td></tr><tr><td data-label="Experimento">D. Menor penalización</td><td data-label="Transformación">PCA con 90 % de varianza</td><td data-label="Valor de C">10,0</td></tr></tbody></table>
+<p>En regresión logística, el parámetro <code>C</code> controla de forma inversa la regularización. Un valor menor corresponde a una penalización más fuerte. Para este ejercicio se usa <code>class_weight='balanced'</code> en las cuatro alternativas.</p>
+<p>Además de Accuracy, se deben contrastar Precision, Recall, F1 y Average Precision. Dos modelos pueden obtener una Accuracy similar y cometer errores empresariales muy diferentes. Se retoma el supuesto didáctico de la semana 12: cada falso positivo cuesta R$ 8 y cada falso negativo cuesta R$ 35. Estas cifras no son costos observados de Olist.</p>
+</section>
+<section id="estadistica"><h2>¿Las particiones se comportan de manera similar?</h2>
+<p>La prueba de Kolmogorov-Smirnov para dos muestras permite contrastar las distribuciones de una variable continua en dos grupos. Se utilizará para comparar <code>valor_flete</code> entre entrenamiento y validación. La hipótesis nula establece que ambas muestras proceden de la misma distribución; la alternativa plantea que sus distribuciones son diferentes.</p>
+<pre><code>from scipy.stats import ks_2samp
+
+resultado = ks_2samp(train['valor_flete'].dropna(),
+                     valid['valor_flete'].dropna())
+print(resultado.statistic, resultado.pvalue)</code></pre>
+<p>La interpretación deberá indicar el estadístico D, el valor p y la decisión al nivel de significancia del 5 %. No rechazar la hipótesis nula no demuestra que las distribuciones sean idénticas. Del mismo modo, esta prueba no compara directamente el desempeño de los modelos ni permite afirmar que una configuración es estadísticamente superior a otra.</p>
+</section>
+<section id="actividad"><h2>Actividad entregable</h2>
+<p>El trabajo de esta semana se desarrolla en el notebook individual. Se deben completar los ejercicios señalados, ejecutar el cuaderno desde el inicio, registrar los resultados y escribir las interpretaciones a partir de los valores propios. La entrega se propone para el domingo 15 de noviembre, con el horario definitivo establecido en Teams.</p>
+<ol><li>Generar la curva de varianza explicada acumulada, registrar el número de componentes y explicar su utilidad para el problema.</li><li>Comparar las cuatro configuraciones con las métricas indicadas y presentar una conclusión que contraste el modelo sin PCA con los modelos que utilizan PCA.</li><li>Calcular falsos positivos, falsos negativos y costo didáctico. Elegir un modelo y justificar la decisión empresarial.</li><li>Aplicar KS sobre <code>valor_flete</code>, formular las hipótesis e interpretar los resultados con una limitación metodológica.</li><li>Guardar el notebook ejecutado y los reportes en el repositorio individual. En Teams se registra el enlace al commit correspondiente.</li></ol>
+<p>El resultado se considera completo cuando puede reproducirse sin variables previamente cargadas en Colab. La carpeta <code>reports/</code> contendrá el registro de experimentos y un resumen del análisis. No deben publicarse los archivos originales ni la muestra completa de pedidos.</p>
+<h3>¿Cómo se evaluará?</h3>
+<table><thead><tr><th>Criterio</th><th>Ponderación de esta actividad</th></tr></thead><tbody><tr><td data-label="Criterio">PCA y explicación de la reducción de dimensionalidad</td><td data-label="Ponderación de esta actividad">25 %</td></tr><tr><td data-label="Criterio">Comparación de modelos, métricas y justificación de la elección</td><td data-label="Ponderación de esta actividad">40 %</td></tr><tr><td data-label="Criterio">Planteamiento e interpretación de la prueba KS</td><td data-label="Ponderación de esta actividad">20 %</td></tr><tr><td data-label="Criterio">Notebook reproducible y evidencias en el repositorio</td><td data-label="Ponderación de esta actividad">15 %</td></tr></tbody></table>
+<p class="small">Esta tabla distribuye el puntaje de la actividad. No modifica los porcentajes del tercer corte.</p></section>
+<section><h2>Material de consulta</h2><p>Revisar la guía Olist de la semana 12 y los documentos <em>Prueba de Kolmogorov-Smirnov</em> y <em>Taller de repaso de pruebas de hipótesis</em>, disponibles en Teams. Para PCA y regresión logística, consultar la documentación de scikit-learn.</p><ol class="references"><li><a href="https://scikit-learn.org/stable/modules/decomposition.html#pca">Principal component analysis (PCA), scikit-learn</a>.</li><li><a href="https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression">Logistic regression, scikit-learn</a>.</li></ol></section>
+</article><footer><div>Editor: Elias Buitrago Bolivar.</div></footer></body></html>
