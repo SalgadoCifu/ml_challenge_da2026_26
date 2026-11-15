@@ -21,10 +21,10 @@ reproducible de 35.000 pedidos (24.500 train / 5.250 valid / 5.250 test).
 ```
 data/raw/         datos originales (no se publican)
 data/processed/   datos preparados (se regeneran)
-notebooks/        notebooks de las semanas S12 a S15
+notebooks/SXX/    un notebook por semana (S12 a S15)
 src/              código modular reutilizable (uso progresivo)
-reports/          métricas (JSON) e informe ejecutivo
-docs/             guía técnica y presentación del reto
+reports/SXX/      métricas (JSON) e informe ejecutivo de cada semana
+docs/SXX/         guía técnica de cada semana (docs/ guarda el PDF del reto)
 ```
 
 ## Avance por semana
@@ -45,10 +45,10 @@ docs/             guía técnica y presentación del reto
 Regresión Ridge (días de entrega): MAE = 5,27 días. Huella de la muestra: `78a4ad412176`.
 
 ## Cómo reproducir
-1. Abrir `notebooks/S12_ML_Challenge.ipynb` en Google Colab.
+1. Abrir `notebooks/S12/S12_ML_Challenge.ipynb` en Google Colab.
 2. Verificar que `ID_ESTUDIANTE = 26`.
 3. Ejecutar *Entorno de ejecución → Reiniciar y ejecutar todo*.
-4. El reporte se genera en `reports/S12_resultados_ID_26.json`.
+4. El reporte se genera en `reports/S12/S12_resultados_ID_26.json`.
 
 ## Licencia
 MIT.
