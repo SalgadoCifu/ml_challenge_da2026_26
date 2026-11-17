@@ -18,9 +18,9 @@
 
 ## Prueba KS sobre `valor_flete` (entrenamiento vs validación)
 - D = 0,0144; valor p = 0,3242; alfa = 0,05.
-- Hipótesis y decisión: (pendiente, la escribo yo)
+- Hipótesis y decisión: H0 dice que `valor_flete` se comporta igual en entrenamiento y validación, y H1 que se comporta distinto. Con D = 0,0144 y valor p = 0,3242, no se rechaza H0 al 5 %.
 
-## Interpretación (pendiente, la escribo yo)
-- Modelo elegido y justificación:
-- Utilidad de PCA para este problema:
-- Limitación de la prueba KS:
+## Interpretación
+- Modelo elegido y justificación: A (sin PCA, C=1), porque tiene el menor costo en validación (R$ 17.642).
+- Utilidad de PCA para este problema: redujo 24 variables numéricas a 15 componentes, pero no ayudó a encontrar más pedidos tardíos.
+- Limitación de la prueba KS: mira una sola variable a la vez, y un valor p alto no prueba que los datos sean iguales.
