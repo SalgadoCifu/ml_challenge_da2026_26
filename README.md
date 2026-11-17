@@ -31,8 +31,8 @@ docs/SXX/         guía técnica de cada semana (docs/ guarda el PDF del reto)
 | Semana | Laboratorio | Peso | Estado |
 |---|---|---|---|
 | S12 | Lab 1: modelos base y métricas | 3 % | Completado |
-| S13 | Lab 2: ajuste y regularización | 3 % | Pendiente |
-| S14 | Lab 3: validación e inferencia | 2 % | Pendiente |
+| S13 | Sin clase; su tema (PCA) pasó a la S14 | 3 % | No se dictó |
+| S14 | Lab 2: PCA y evaluación de mejoras | 2 % | Completado |
 | S15 | Lab 4: red neuronal y escalabilidad | 2 % | Pendiente |
 | S16 | Desafío integrador | 15 % | Pendiente |
 
@@ -44,11 +44,23 @@ docs/SXX/         guía técnica de cada semana (docs/ guarda el PDF del reto)
 
 Regresión Ridge (días de entrega): MAE = 5,27 días. Huella de la muestra: `78a4ad412176`.
 
+## Resultados S14 (validación, ID 26)
+Se aplicó PCA a las 24 variables numéricas: 15 componentes explican al menos el 90 % de la varianza (0,904). Los cuatro modelos usan la misma muestra, la misma partición, `class_weight='balanced'` y umbral 0,50.
+
+| Modelo | Accuracy | Precision | Recall | F1 | AP | Costo (R$) |
+|---|---|---|---|---|---|---|
+| A. Referencia (sin PCA, C=1) | 0,661 | 0,122 | 0,645 | 0,205 | 0,145 | 17.642 |
+| B. PCA 90 % (C=1) | 0,646 | 0,112 | 0,611 | 0,189 | 0,127 | 18.582 |
+| C. PCA 90 % (C=0,1) | 0,645 | 0,112 | 0,614 | 0,190 | 0,130 | 18.611 |
+| D. PCA 90 % (C=10) | 0,646 | 0,112 | 0,611 | 0,189 | 0,126 | 18.598 |
+
+Modelo elegido: A. Referencia (sin PCA, C=1), por tener el menor costo en validación. Prueba KS sobre `valor_flete` (entrenamiento frente a validación): D = 0,0144, valor p = 0,3242; no se rechaza H0 al 5 %. El detalle está en `reports/S14/S14_resumen_ID_26.md`.
+
 ## Cómo reproducir
-1. Abrir `notebooks/S12/S12_ML_Challenge.ipynb` en Google Colab.
+1. Abrir en Google Colab el notebook de la semana: `notebooks/S12/S12_ML_Challenge.ipynb` o `notebooks/S14/S14_PCA_Modelos.ipynb`.
 2. Verificar que `ID_ESTUDIANTE = 26`.
 3. Ejecutar *Entorno de ejecución → Reiniciar y ejecutar todo*.
-4. El reporte se genera en `reports/S12/S12_resultados_ID_26.json`.
+4. Los reportes se generan en `reports/S12/` y `reports/S14/`.
 
 ## Licencia
 MIT.
